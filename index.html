@@ -1,4 +1,159 @@
-// ▼▼▼ 下関市立大学 生協食堂メニュー設定 ▼▼▼
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下関市立大学 学食1000円ガチャ</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .btn-gacha {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #c0392b;
+            transition: transform 0.1s, box-shadow 0.1s;
+            width: 100%;
+            max-width: 300px;
+        }
+        .btn-gacha:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #c0392b;
+        }
+        .receipt {
+            margin-top: 30px;
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: 5px solid #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: left;
+            position: relative;
+            display: none;
+        }
+        .receipt::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(135deg, transparent 50%, #fff 50%),
+                        linear-gradient(45deg, #fff 50%, transparent 50%);
+            background-size: 20px 20px;
+            background-repeat: repeat-x;
+        }
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #ccc;
+            padding: 8px 0;
+            font-size: 0.95rem;
+        }
+        .receipt-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 2px solid #333;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .balance-info {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #e74c3c;
+            margin-top: 5px;
+        }
+        .evaluation-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #555;
+            text-align: left;
+        }
+        .evaluation-box h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 0.95rem;
+        }
+        .btn-share {
+            display: inline-block;
+            margin-top: 25px;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🍽️ 下関市立大学<br>学食1000円ガチャ</h1>
+        <p class="description">1000円に到達するまでランダムに注文します。</p>
+        
+        <button class="btn-gacha" onclick="spinGacha()">ガチャを回す</button>
+
+        <div id="result-area" class="receipt">
+            <div id="items-list"></div>
+            
+            <div class="receipt-total">
+                <span>合計</span>
+                <span id="total-price">0円</span>
+            </div>
+            <div class="balance-info" id="balance-info"></div>
+
+            <div class="evaluation-box">
+                <h4>📊 評価</h4>
+                <div id="nutrition-comment"></div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="#" id="share-link" class="btn-share" target="_blank">𝕏 で結果をポスト</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
         const menu = [
             // カレー・丼・ピラフ
             { name: "タコライス(M)", price: 484, kcal: 678 },
@@ -13,7 +168,6 @@
             { name: "温玉カレー(M)", price: 363, kcal: 630 },
             { name: "牛丼(M)", price: 418, kcal: 680 },
             { name: "天津飯", price: 396, kcal: 610 },
-
             // 麺類
             { name: "醤油ラーメン", price: 385, kcal: 450 },
             { name: "豚骨ラーメン", price: 418, kcal: 520 },
@@ -23,7 +177,6 @@
             { name: "ぶっかけうどん(温)", price: 286, kcal: 300 },
             { name: "カレーうどん", price: 352, kcal: 460 },
             { name: "ミートソーススパゲティ", price: 418, kcal: 580 },
-
             // 主菜
             { name: "鶏ポン唐揚げ", price: 330, kcal: 400 },
             { name: "カマンベールチキンカツ", price: 350, kcal: 450 },
@@ -33,7 +186,6 @@
             { name: "チキン南蛮", price: 352, kcal: 550 },
             { name: "白身魚のフライ", price: 220, kcal: 340 },
             { name: "豚肉の生姜焼き", price: 330, kcal: 420 },
-
             // 副菜・小鉢
             { name: "揚げ出し豆腐", price: 110, kcal: 120 },
             { name: "オクラの巣ごもり", price: 66, kcal: 25 },
@@ -45,23 +197,82 @@
             { name: "春雨サラダ", price: 88, kcal: 90 },
             { name: "納豆", price: 55, kcal: 100 },
             { name: "温泉卵", price: 66, kcal: 80 },
-
             // スープ類
             { name: "味噌汁", price: 33, kcal: 40 },
             { name: "豚汁", price: 110, kcal: 160 },
             { name: "かき玉汁", price: 55, kcal: 60 },
             { name: "わかめスープ", price: 44, kcal: 20 },
-
             // ライス類
             { name: "ライス(SS)", price: 77, kcal: 160 },
             { name: "ライス(S)", price: 88, kcal: 230 },
             { name: "ライス(M)", price: 110, kcal: 340 },
             { name: "ライス(L)", price: 132, kcal: 450 },
-
             // デザート
             { name: "自家製プリン", price: 132, kcal: 180 },
             { name: "杏仁豆腐", price: 110, kcal: 120 },
             { name: "大学芋", price: 110, kcal: 190 },
             { name: "シュークリーム", price: 120, kcal: 210 }
         ];
-        // ▲▲▲ メニュー設定ここまで ▲▲▲
+
+        function spinGacha() {
+            let currentTotal = 0;
+            let currentKcal = 0;
+            let selectedItems = [];
+            
+            // メニューをランダムにシャッフル
+            const shuffledMenu = [...menu].sort(() => Math.random() - 0.5);
+
+            // 1000円を超えるまで順番に足していく（サイゼリヤガチャ方式）
+            for (const item of shuffledMenu) {
+                if (currentTotal + item.price <= 1000) {
+                    selectedItems.push(item);
+                    currentTotal += item.price;
+                    currentKcal += item.kcal;
+                }
+            }
+
+            displayResult(selectedItems, currentTotal, currentKcal);
+        }
+
+        function displayResult(items, total, kcal) {
+            const listElement = document.getElementById('items-list');
+            listElement.innerHTML = '';
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'receipt-item';
+                div.innerHTML = `<span>${item.name}</span><span>${item.price}円</span>`;
+                listElement.appendChild(div);
+            });
+
+            document.getElementById('total-price').textContent = `${total}円`;
+            document.getElementById('balance-info').textContent = `（お釣り: ${1000 - total}円）`;
+            
+            // 評価コメントの生成
+            let evalHtml = `<strong>【価格面】</strong><br>`;
+            evalHtml += `合計 ${total}円。予算1000円に対して無駄のない素晴らしい組み合わせです。<br><br>`;
+            
+            evalHtml += `<strong>【栄養面】</strong><br>`;
+            evalHtml += `総カロリー: <strong>${kcal} kcal</strong><br>`;
+            
+            if (kcal > 1200) {
+                evalHtml += `⚠️ カロリーオーバー気味です。午後の授業は眠くなるかもしれません。`;
+            } else if (kcal < 600) {
+                evalHtml += `💡 少しカロリーが低めです。夕方にお腹が空くかもしれません。`;
+            } else {
+                evalHtml += `✨ 理想的な摂取カロリー範囲（600〜1000kcal）に収まっています。バランスが良いです。`;
+            }
+
+            document.getElementById('nutrition-comment').innerHTML = evalHtml;
+
+            // Xシェア用のテキスト生成
+            const shareText = `下関市立大学【学食1000円ガチャ】\n計 ${total}円 / ${kcal}kcal\n\n${items.map(i => i.name).join('\n')}\n\n#学食ガチャ`;
+            const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+            document.getElementById('share-link').href = shareUrl;
+
+            document.getElementById('result-area').style.display = 'block';
+            document.getElementById('result-area').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

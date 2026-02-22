@@ -98,6 +98,14 @@
             padding: 8px 0;
             font-size: 0.95rem;
         }
+        .receipt-item span:first-child {
+            display: flex;
+            align-items: center;
+        }
+        .item-emoji {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
         .receipt-total {
             display: flex;
             justify-content: space-between;
@@ -137,6 +145,10 @@
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .btn-share:hover {
+            background-color: #333;
         }
     </style>
 </head>
@@ -183,82 +195,79 @@
     </div>
 
     <script>
-        // ▼▼▼ メニュー設定 ▼▼▼
+        // ▼▼▼ メニュー設定（絵文字追加版） ▼▼▼
         const menu = [
             // カレー・丼・ピラフ
-            { name: "タコライス(M)", price: 484, kcal: 678 },
-            { name: "タコライス(S)", price: 429, kcal: 450 },
-            { name: "帆立とじゃがいもの北海道ピラフ(M)", price: 286, kcal: 421 },
-            { name: "帆立とじゃがいもの北海道ピラフ(S)", price: 220, kcal: 300 },
-            { name: "豚挽き肉とポテトの味噌バター炊き込みピラフ(M)", price: 209, kcal: 464 },
-            { name: "豚挽き肉とポテトの味噌バター炊き込みピラフ(S)", price: 165, kcal: 320 },
-            { name: "カツカレー(M)", price: 495, kcal: 920 },
-            { name: "カツカレー(S)", price: 440, kcal: 700 },
-            { name: "カレーライス(M)", price: 297, kcal: 550 },
-            { name: "温玉カレー(M)", price: 363, kcal: 630 },
-            { name: "牛丼(M)", price: 418, kcal: 680 },
-            { name: "天津飯", price: 396, kcal: 610 },
+            { name: "タコライス(M)", price: 484, kcal: 678, emoji: "🍛" },
+            { name: "タコライス(S)", price: 429, kcal: 450, emoji: "🍛" },
+            { name: "帆立とじゃがいもの北海道ピラフ(M)", price: 286, kcal: 421, emoji: "🍚" },
+            { name: "帆立とじゃがいもの北海道ピラフ(S)", price: 220, kcal: 300, emoji: "🍚" },
+            { name: "豚挽き肉とポテトの味噌バター炊き込みピラフ(M)", price: 209, kcal: 464, emoji: "🍚" },
+            { name: "豚挽き肉とポテトの味噌バター炊き込みピラフ(S)", price: 165, kcal: 320, emoji: "🍚" },
+            { name: "カツカレー(M)", price: 495, kcal: 920, emoji: "🍛" },
+            { name: "カツカレー(S)", price: 440, kcal: 700, emoji: "🍛" },
+            { name: "カレーライス(M)", price: 297, kcal: 550, emoji: "🍛" },
+            { name: "温玉カレー(M)", price: 363, kcal: 630, emoji: "🍛" },
+            { name: "牛丼(M)", price: 418, kcal: 680, emoji: "🍚" },
+            { name: "天津飯", price: 396, kcal: 610, emoji: "🍚" },
             // 麺類
-            { name: "醤油ラーメン", price: 385, kcal: 450 },
-            { name: "豚骨ラーメン", price: 418, kcal: 520 },
-            { name: "かけうどん", price: 220, kcal: 280 },
-            { name: "きつねうどん", price: 286, kcal: 350 },
-            { name: "肉うどん", price: 396, kcal: 420 },
-            { name: "ぶっかけうどん(温)", price: 286, kcal: 300 },
-            { name: "カレーうどん", price: 352, kcal: 460 },
-            { name: "ミートソーススパゲティ", price: 418, kcal: 580 },
+            { name: "醤油ラーメン", price: 385, kcal: 450, emoji: "🍜" },
+            { name: "豚骨ラーメン", price: 418, kcal: 520, emoji: "🍜" },
+            { name: "かけうどん", price: 220, kcal: 280, emoji: "🍜" },
+            { name: "きつねうどん", price: 286, kcal: 350, emoji: "🍜" },
+            { name: "肉うどん", price: 396, kcal: 420, emoji: "🍜" },
+            { name: "ぶっかけうどん(温)", price: 286, kcal: 300, emoji: "🍜" },
+            { name: "カレーうどん", price: 352, kcal: 460, emoji: "🍜" },
+            { name: "ミートソーススパゲティ", price: 418, kcal: 580, emoji: "🍝" },
             // 主菜
-            { name: "鶏ポン唐揚げ", price: 330, kcal: 400 },
-            { name: "カマンベールチキンカツ", price: 350, kcal: 450 },
-            { name: "ハンバーグおろしソース", price: 308, kcal: 380 },
-            { name: "さばの味噌煮", price: 286, kcal: 320 },
-            { name: "さばの塩焼き", price: 286, kcal: 310 },
-            { name: "チキン南蛮", price: 352, kcal: 550 },
-            { name: "白身魚のフライ", price: 220, kcal: 340 },
-            { name: "豚肉の生姜焼き", price: 330, kcal: 420 },
+            { name: "鶏ポン唐揚げ", price: 330, kcal: 400, emoji: "🍗" },
+            { name: "カマンベールチキンカツ", price: 350, kcal: 450, emoji: "🍗" },
+            { name: "ハンバーグおろしソース", price: 308, kcal: 380, emoji: "🍖" },
+            { name: "さばの味噌煮", price: 286, kcal: 320, emoji: "🐟" },
+            { name: "さばの塩焼き", price: 286, kcal: 310, emoji: "🐟" },
+            { name: "チキン南蛮", price: 352, kcal: 550, emoji: "🍗" },
+            { name: "白身魚のフライ", price: 220, kcal: 340, emoji: "🐟" },
+            { name: "豚肉の生姜焼き", price: 330, kcal: 420, emoji: "🍖" },
             // 副菜・小鉢
-            { name: "揚げ出し豆腐", price: 110, kcal: 120 },
-            { name: "オクラの巣ごもり", price: 66, kcal: 25 },
-            { name: "冷奴", price: 66, kcal: 80 },
-            { name: "ほうれん草のお浸し", price: 88, kcal: 30 },
-            { name: "ひじきの煮物", price: 66, kcal: 45 },
-            { name: "きんぴらごぼう", price: 88, kcal: 60 },
-            { name: "ポテトサラダ", price: 110, kcal: 150 },
-            { name: "春雨サラダ", price: 88, kcal: 90 },
-            { name: "納豆", price: 55, kcal: 100 },
-            { name: "温泉卵", price: 66, kcal: 80 },
+            { name: "揚げ出し豆腐", price: 110, kcal: 120, emoji: "🥢" },
+            { name: "オクラの巣ごもり", price: 66, kcal: 25, emoji: "🥢" },
+            { name: "冷奴", price: 66, kcal: 80, emoji: "🥢" },
+            { name: "ほうれん草のお浸し", price: 88, kcal: 30, emoji: "🥗" },
+            { name: "ひじきの煮物", price: 66, kcal: 45, emoji: "🥢" },
+            { name: "きんぴらごぼう", price: 88, kcal: 60, emoji: "🥢" },
+            { name: "ポテトサラダ", price: 110, kcal: 150, emoji: "🥗" },
+            { name: "春雨サラダ", price: 88, kcal: 90, emoji: "🥗" },
+            { name: "納豆", price: 55, kcal: 100, emoji: "🥢" },
+            { name: "温泉卵", price: 66, kcal: 80, emoji: "🥚" },
             // スープ類
-            { name: "味噌汁", price: 33, kcal: 40 },
-            { name: "豚汁", price: 110, kcal: 160 },
-            { name: "かき玉汁", price: 55, kcal: 60 },
-            { name: "わかめスープ", price: 44, kcal: 20 },
+            { name: "味噌汁", price: 33, kcal: 40, emoji: "🥣" },
+            { name: "豚汁", price: 110, kcal: 160, emoji: "🥣" },
+            { name: "かき玉汁", price: 55, kcal: 60, emoji: "🥣" },
+            { name: "わかめスープ", price: 44, kcal: 20, emoji: "🥣" },
             // ライス類
-            { name: "ライス(SS)", price: 77, kcal: 160 },
-            { name: "ライス(S)", price: 88, kcal: 230 },
-            { name: "ライス(M)", price: 110, kcal: 340 },
-            { name: "ライス(L)", price: 132, kcal: 450 },
+            { name: "ライス(SS)", price: 77, kcal: 160, emoji: "🍚" },
+            { name: "ライス(S)", price: 88, kcal: 230, emoji: "🍚" },
+            { name: "ライス(M)", price: 110, kcal: 340, emoji: "🍚" },
+            { name: "ライス(L)", price: 132, kcal: 450, emoji: "🍚" },
             // デザート
-            { name: "自家製プリン", price: 132, kcal: 180 },
-            { name: "杏仁豆腐", price: 110, kcal: 120 },
-            { name: "大学芋", price: 110, kcal: 190 },
-            { name: "シュークリーム", price: 120, kcal: 210 }
+            { name: "自家製プリン", price: 132, kcal: 180, emoji: "🍮" },
+            { name: "杏仁豆腐", price: 110, kcal: 120, emoji: "🍮" },
+            { name: "大学芋", price: 110, kcal: 190, emoji: "🍠" },
+            { name: "シュークリーム", price: 120, kcal: 210, emoji: "🧁" }
         ];
 
         function toggleManualInput() {
             const select = document.getElementById('budget-select');
             const manualArea = document.getElementById('manual-input-area');
-            if (select.value === 'manual') {
-                manualArea.style.display = 'block';
-            } else {
-                manualArea.style.display = 'none';
-            }
+            manualArea.style.display = (select.value === 'manual') ? 'block' : 'none';
         }
 
         function getTargetBudget() {
             const select = document.getElementById('budget-select');
             if (select.value === 'manual') {
                 const manualValue = parseInt(document.getElementById('manual-budget').value, 10);
-                return isNaN(manualValue) || manualValue < 1 ? 800 : manualValue;
+                // 入力値が不正または極端に小さい場合はデフォルト800円とする
+                return (isNaN(manualValue) || manualValue < 100) ? 800 : manualValue;
             }
             return parseInt(select.value, 10);
         }
@@ -294,7 +303,8 @@
                 items.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'receipt-item';
-                    div.innerHTML = `<span>${item.name}</span><span>${item.price}円</span>`;
+                    // レシート画面にも絵文字を表示
+                    div.innerHTML = `<span><span class="item-emoji">${item.emoji}</span>${item.name}</span><span>${item.price}円</span>`;
                     listElement.appendChild(div);
                 });
             }
@@ -309,20 +319,29 @@
             evalHtml += `<strong>【栄養面】</strong><br>`;
             evalHtml += `総カロリー: <strong>${kcal} kcal</strong><br>`;
             
-            if (kcal > 2000) {
-                evalHtml += `⚠️ 驚異的なカロリーです。一食で摂取する量を超えています。`;
-            } else if (kcal > 1200 && targetBudget <= 1200) {
-                evalHtml += `⚠️ カロリーオーバー気味です。午後の授業は眠くなるかもしれません。`;
-            } else if (kcal < targetBudget * 0.4 && targetBudget > 800) {
-                evalHtml += `💡 予算の割にカロリーが低めです。ヘルシーな組み合わせを引きました。`;
+            if (kcal > 2500) {
+                 evalHtml += `⚠️ フードファイター並のカロリーです。複数人でシェアしましょう。`;
+            } else if (kcal > 1500) {
+                evalHtml += `⚠️ かなりの高カロリーです。今日はこれ一食で十分かもしれません。`;
+            } else if (kcal < targetBudget * 0.3 && targetBudget > 800) {
+                evalHtml += `💡 予算の割にカロリーがかなり低めです。ダイエット中ですか？`;
             } else {
-                evalHtml += `✨ バランスの取れた組み合わせです。しっかり食べて頑張りましょう！`;
+                evalHtml += `✨ バランス良く選ばれました。美味しくいただきましょう！`;
             }
 
             document.getElementById('nutrition-comment').innerHTML = evalHtml;
 
-            // Xシェア用のテキスト生成
-            const shareText = `下関市立大学【学食${targetBudget}円ガチャ】\n計 ${total}円 / ${kcal}kcal\n\n${items.map(i => i.name).join('\n')}\n\n#学食ガチャ`;
+            // ▼▼▼ Xシェア機能の修正箇所 ▼▼▼
+            
+            // 1. メニューリストの作成（絵文字付き）
+            const menuListText = items.map(i => `${i.emoji} ${i.name}`).join('\n');
+            
+            // 2. 現在のページのURLを取得
+            const currentUrl = window.location.href;
+
+            // 3. シェア用テキストの生成（URLを追加）
+            const shareText = `下関市立大学【学食${targetBudget}円ガチャ】\n計 ${total}円 / ${kcal}kcal\n\n${menuListText}\n\n${currentUrl}\n#学食ガチャ`;
+            
             const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
             document.getElementById('share-link').href = shareUrl;
 
